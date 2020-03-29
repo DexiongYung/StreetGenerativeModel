@@ -20,7 +20,7 @@ from Utilities.Utilities import plot_losses, timeSince
 
 # Optional command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', help='Name of the Session', nargs='?', default='first', type=str)
+parser.add_argument('--name', help='Name of the Session', nargs='?', default='address', type=str)
 parser.add_argument('--hidden_size', help='Size of the hidden layer of LSTM', nargs='?', default=256, type=int)
 parser.add_argument('--embed_dim', help='Size of embedding dimension', nargs='?', default=32, type=int)
 parser.add_argument('--lr', help='Learning rate', nargs='?', default=0.0005, type=float)
@@ -31,7 +31,7 @@ parser.add_argument('--column', help='Column header of data', nargs='?', default
 parser.add_argument('--print', help='Print every', nargs='?', default=50, type=int)
 parser.add_argument('--batch', help='Batch size', nargs='?', default=5000, type=int)
 parser.add_argument('--continue_training', help='Boolean whether to continue training an existing model', nargs='?',
-                    default=0, type=int)
+                    default=1, type=int)
 
 # Parse optional args from command line and save the configurations into a JSON file
 args = parser.parse_args()
@@ -192,5 +192,5 @@ optimizer = torch.optim.Adam(lstm.parameters(), lr=LR)
 
 df = pd.read_csv(TRAIN_FILE)
 ds = StreetDataset(df)
-dl = DataLoader(ds, batch_size=200)
+dl = DataLoader(ds, batch_size=BATCH_SZ)
 iter_train(dl)
