@@ -28,7 +28,7 @@ parser.add_argument('--epoch', help='Number of epochs', nargs='?', default=10000
 parser.add_argument('--num_layers', help='Number of layers', nargs='?', default=5, type=int)
 parser.add_argument('--train_file', help='File to train on', nargs='?', default='Data/Addresses.csv', type=str)
 parser.add_argument('--column', help='Column header of data', nargs='?', default='name', type=str)
-parser.add_argument('--print', help='Print every', nargs='?', default=50, type=int)
+parser.add_argument('--print', help='Print every', nargs='?', default=1, type=int)
 parser.add_argument('--batch', help='Batch size', nargs='?', default=500, type=int)
 parser.add_argument('--continue_training', help='Boolean whether to continue training an existing model', nargs='?',
                     default=1, type=int)
@@ -107,7 +107,7 @@ def iter_train(dl: DataLoader, epoch: int = EPOCH, path: str = "Checkpoints/",
                 all_losses.append(total_loss / print_every)
                 total_loss = 0
                 plot_losses(all_losses, x_label=f"Iteration of Batch Size: {BATCH_SZ}", y_label="NLLosss", filename=NAME)
-                torch.save({'weights': lstm.state_dict()}, os.path.join(f"{path}{NAME}.path.tar"))
+                torch.save({'weights': lstm.state_dict()}, f"{path}{NAME}.path.tar")
 
 
 def iter_train_dl(dl: DataLoader, epochs: int = EPOCH, path: str = "Checkpoints/", print_every: int = PRINTS):
