@@ -127,18 +127,19 @@ def iter_train_dl(dl: DataLoader, epochs: int = EPOCH, path: str = "Checkpoints/
                 torch.save({'weights': lstm.state_dict()}, os.path.join(f"{path}{NAME}.path.tar"))
 
 
-def sample(length: list):
+def sample(zip: str):
     with torch.no_grad():
         max_length = length[0]
         lstm_input = indexTensor([[SOS]], 1, IN_CHARS).to(DEVICE)
-        lng_input = lengthTestTensor([length]).to(DEVICE)
         lstm_hidden = lstm.initHidden(1)
         lstm_hidden = (lstm_hidden[0].to(DEVICE), lstm_hidden[1].to(DEVICE))
         name = ''
         char = SOS
+        zip_list = [c for c in zip]
+        zip_tensor = torch.tensor(zip_list).to(DEVICE)
 
         for i in range(max_length):
-            lstm_probs, lstm_hidden = lstm(lstm_input[0], lng_input, lstm_hidden)
+            lstm_probs, lstm_hidden = lstm(lstm_input[0], zip_tensor, lstm_hidden)
             lstm_probs = torch.softmax(lstm_probs, dim=2)
             sample = torch.distributions.categorical.Categorical(lstm_probs).sample()
             sample = sample[0]
@@ -187,10 +188,12 @@ if args.continue_training == 1:
     
 lstm.to(DEVICE)
 
-criterion = nn.NLLLoss(ignore_index=OUT_CHARS.index(PAD))
-optimizer = torch.optim.Adam(lstm.parameters(), lr=LR)
+print(sample('85284'))
 
-df = pd.read_csv(TRAIN_FILE)
-ds = StreetDataset(df)
-dl = DataLoader(ds, batch_size=BATCH_SZ)
-iter_train(dl)
+# criterion = nn.NLLLoss(ignore_index=OUT_CHARS.index(PAD))
+# optimizer = torch.optim.Adam(lstm.parameters(), lr=LR)
+
+# df = pd.read_csv(TRAIN_FILE)
+# ds = StreetDataset(df)
+# dl = DataLoader(ds, batch_size=BATCH_SZ)
+# iter_train(dl)
