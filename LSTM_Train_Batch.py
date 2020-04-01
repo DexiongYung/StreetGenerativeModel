@@ -124,7 +124,7 @@ def iter_train_dl(dl: DataLoader, epochs: int = EPOCH, path: str = "Checkpoints/
                 total_loss = 0
                 plot_losses(all_losses, x_label=f"Iteration of Batch Size: {BATCH_SZ}", y_label="NLLosss",
                             filename=NAME)
-                torch.save({'weights': lstm.state_dict()}, os.path.join(f"{path}{NAME}.path.tar"))
+                torch.save({'weights': lstm.state_dict()}, f"{path}{NAME}.path.tar")
 
 
 def sample(zip: str):
@@ -184,16 +184,13 @@ lstm = LSTM(IN_COUNT, HIDDEN_SZ, OUT_COUNT, padding_idx=IN_CHARS.index(PAD), num
                embed_size=EMBED_DIM)
 
 if args.continue_training == 1:
-    lstm.load_state_dict(torch.load(f'Checkpoints/{NAME}.path.tar')['weights'])
-    
+    lstm.load_state_dict(torch.load(f'Checkpoints/{NAME}.path.tar')['weights'])    
 lstm.to(DEVICE)
 
-print(sample('85284'))
+criterion = nn.NLLLoss(ignore_index=OUT_CHARS.index(PAD))
+optimizer = torch.optim.Adam(lstm.parameters(), lr=LR)
 
-# criterion = nn.NLLLoss(ignore_index=OUT_CHARS.index(PAD))
-# optimizer = torch.optim.Adam(lstm.parameters(), lr=LR)
-
-# df = pd.read_csv(TRAIN_FILE)
-# ds = StreetDataset(df)
-# dl = DataLoader(ds, batch_size=BATCH_SZ)
-# iter_train(dl)
+df = pd.read_csv(TRAIN_FILE)
+ds = StreetDataset(df)
+dl = DataLoader(ds, batch_size=BATCH_SZ)
+iter_train(dl)
